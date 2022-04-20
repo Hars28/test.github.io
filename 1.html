@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  
+</head>
+<style>
+    h1{
+        width: 100%;
+        text-align: center;
+        background-color: black;
+        color: aliceblue;
+    }
+      .box1{
+            align-items: center;
+        }
+    #query{
+        width: 200px;
+    }
+    #movies_div1{
+        border:solid 1px black;
+        height: 200px;
+        width: 206px;
+        border-top: none;
+        overflow: scroll;
+    }
+    #main{
+        display: flex;
+        justify-content: space-around;
+    }
+</style>
+<body>
+    <h1>Hotstar</h1>
+    <div id="main">
+    <div id="movies_div1">
+        <input oninput="debounce(main,1000)" type="text" id="query"/>
+        <div id="movies"></div>
+
+    </div>
+    <div id="container2"></div>
+</div>
+    
+</body>
+</html>
+
+<script>
+    let id;
+    let movies_div=document.getElementById("movies")
+
+async function searchMovies(){
+    try{
+    const query=document.getElementById("query").value
+
+    let res=await fetch(`https://www.omdbapi.com/?apikey=583f7ef5&t&s=${query}`)
+
+    let data=await res.json()
+    
+
+    const movies=data.Search;
+
+        return movies;
+    
+
+} catch (err){
+    console.log("err:",err);
+}
+}
+
+
+function appendMovies(data){
+ 
+//  optimization #2
+    movies_div.innerHTML=null;
+    data.forEach(function(el) {
+        let p=document.createElement("p")
+        p.innerText=el.Title;
+        movies_div.append(p)
+        p.addEventListener("click",function(){
+            fun(el)
+        })
+ 
+    });
+    
+}
+
+async function main(){
+    let data=await searchMovies();
+    if(data===undefined){
+        return false;
+    }
+    appendMovies(data)
+}
+
+
+// Debouncing
+
+function debounce(func,delay){
+    if(id){
+        clearTimeout(id);
+    }
+    id=setTimeout(function(){
+        func();
+    },delay);
+}
+function fun(ele){
+    document.querySelector("#container2").innerHTML=""
+    var box1= document.createElement("div")
+        box1.setAttribute("class",box1)
+       var img1= document.createElement("img")
+       img1.src=ele.Poster;
+       var p2= document.createElement("p")
+       p2.innerText=ele.Year
+       var p3= document.createElement("p")
+       p3.innerText=ele.Title
+       
+       box1.append(img1,p2,p3)
+
+       document.querySelector("#container2").append(box1)
+
+}
+</script>
+
